@@ -1,22 +1,14 @@
-const jsonHeaders = {
-  "content-type": "application/json; charset=utf-8",
-};
-
-function jsonResponse(payload, status = 200) {
-  return new Response(JSON.stringify(payload), {
-    status,
-    headers: jsonHeaders,
-  });
-}
+import { workerHelloResponse } from "./controllers/health-controller.js";
+import { handleWorkerProjectProxy } from "./controllers/proxy-controller.js";
 
 export default {
-  fetch(request) {
+  async fetch(request) {
     const url = new URL(request.url);
 
     if (url.pathname === "/") {
-      return jsonResponse({ message: "Hello World!" });
+      return workerHelloResponse();
     }
 
-    return jsonResponse({ error: "Not Found" }, 404);
+    return handleWorkerProjectProxy(request);
   },
 };
