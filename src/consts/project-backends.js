@@ -1,4 +1,4 @@
 export const PROJECT_BACKENDS = Object.freeze({
-  portfolio: "https://portfolio-backend.example.com",
+  portfolio: "https://api.oliverhatherton.com",
   blog: "https://blog-backend.example.com",
 });
