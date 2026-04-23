@@ -39,8 +39,19 @@ export async function forwardProjectRequest({
   }
 
   const targetUrl = resolveTargetUrl(baseUrl, restPath, sourceUrl);
+  const isSelfHost =
+    targetUrl.host.toLowerCase() === sourceUrl.host.toLowerCase();
+  const isBasePath = targetUrl.pathname === "/";
+  const isSafeMethod = method === "GET" || method === "HEAD";
 
-  if (targetUrl.host.toLowerCase() === sourceUrl.host.toLowerCase()) {
+  if (isSelfHost && isBasePath && isSafeMethod) {
+    return {
+      ok: true,
+      internalHello: true,
+    };
+  }
+
+  if (isSelfHost) {
     return {
       ok: false,
       status: 502,

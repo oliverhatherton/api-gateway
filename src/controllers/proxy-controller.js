@@ -3,8 +3,15 @@ import {
   filterHopByHopHeaders,
 } from "../utils/header-utils.js";
 import { parseProjectPath } from "../utils/path-utils.js";
-import { buildProxyResponse, forwardProjectRequest } from "../services/proxy-service.js";
-import { workerJsonError } from "./health-controller.js";
+import {
+  buildProxyResponse,
+  forwardProjectRequest,
+} from "../services/proxy-service.js";
+import {
+  sendExpressHello,
+  workerHelloResponse,
+  workerJsonError,
+} from "./health-controller.js";
 
 function buildExpressSourceUrl(request) {
   if (request.originalUrl) {
@@ -28,6 +35,11 @@ export async function handleExpressProjectProxy(request, response) {
 
   if (!result.ok) {
     response.status(result.status).json({ error: result.error });
+    return;
+  }
+
+  if (result.internalHello) {
+    sendExpressHello(response);
     return;
   }
 
@@ -65,6 +77,10 @@ export async function handleWorkerProjectProxy(request) {
 
   if (!result.ok) {
     return workerJsonError(result.status, result.error);
+  }
+
+  if (result.internalHello) {
+    return workerHelloResponse();
   }
 
   const proxyResponse = buildProxyResponse(result.upstreamResponse);
