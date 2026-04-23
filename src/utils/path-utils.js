@@ -8,7 +8,7 @@ function trimLeadingSlashes(value) {
 
 export function resolveTargetUrl(baseUrl, restPath, sourceUrl) {
   const normalizedRestPath = trimLeadingSlashes(restPath || "");
-  const targetPath = normalizedRestPath ? `/${normalizedRestPath}` : "";
+  const targetPath = normalizedRestPath ? `/${normalizedRestPath}` : "/";
   const targetUrl = new URL(`${trimTrailingSlashes(baseUrl)}${targetPath}`);
   targetUrl.search = sourceUrl.search;
   return targetUrl;
