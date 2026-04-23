@@ -10,6 +10,7 @@ export function createForwardInit({ method, headers, body }) {
   const init = {
     method,
     headers,
+    redirect: "manual",
   };
 
   if (body != null && method !== "GET" && method !== "HEAD") {
@@ -38,6 +39,15 @@ export async function forwardProjectRequest({
   }
 
   const targetUrl = resolveTargetUrl(baseUrl, restPath, sourceUrl);
+
+  if (targetUrl.host.toLowerCase() === sourceUrl.host.toLowerCase()) {
+    return {
+      ok: false,
+      status: 502,
+      error: "Project backend cannot point to the gateway host",
+    };
+  }
+
   const forwardHeaders = filterHopByHopHeaders(headers);
 
   try {
