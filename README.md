@@ -29,6 +29,8 @@ Example:
 
 The path `/{project}` (with no extra segments) is also supported and forwards to the project base URL.
 
+For Cloudflare Worker deployments, WebSocket upgrade requests are also proxied through `/{project}/{rest-of-url}`.
+
 ## Project Mapping
 
 Edit `PROJECT_BACKENDS` in `src/consts/project-backends.js`:
@@ -50,6 +52,8 @@ npm start
 ```
 
 The local Express app will listen on `http://localhost:3000`.
+
+Note: local Express mode in this repo currently proxies HTTP requests only. WebSocket proxying is supported in the Worker runtime.
 
 ## Cloudflare Workers
 

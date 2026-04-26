@@ -1,5 +1,8 @@
 import { PROJECT_BACKENDS } from "../consts/project-backends.js";
-import { filterHopByHopHeaders } from "../utils/header-utils.js";
+import {
+  filterHopByHopHeaders,
+  isWebSocketUpgrade,
+} from "../utils/header-utils.js";
 import { resolveTargetUrl } from "../utils/path-utils.js";
 
 export function getProjectBaseUrl(project) {
@@ -59,7 +62,17 @@ export async function forwardProjectRequest({
     };
   }
 
-  const forwardHeaders = filterHopByHopHeaders(headers);
+  const headerEntries = Array.from(headers);
+  const isWebSocket = isWebSocketUpgrade(headerEntries);
+  const forwardHeaders = isWebSocket
+    ? new Headers(headerEntries)
+    : filterHopByHopHeaders(headerEntries);
+
+  if (isWebSocket) {
+    // Let the runtime set these for the upstream target host.
+    forwardHeaders.delete("host");
+    forwardHeaders.delete("content-length");
+  }
 
   try {
     const upstreamResponse = await fetch(

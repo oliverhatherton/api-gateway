@@ -1,6 +1,7 @@
 import {
   expressHeadersToEntries,
   filterHopByHopHeaders,
+  isWebSocketUpgrade,
 } from "../utils/header-utils.js";
 import { parseProjectPath } from "../utils/path-utils.js";
 import {
@@ -61,6 +62,7 @@ export async function handleExpressProjectProxy(request, response) {
 export async function handleWorkerProjectProxy(request) {
   const url = new URL(request.url);
   const parsedPath = parseProjectPath(url.pathname);
+  const isWebSocketRequest = isWebSocketUpgrade(request.headers.entries());
 
   if (!parsedPath) {
     return workerJsonError(404, "Not Found");
@@ -81,6 +83,10 @@ export async function handleWorkerProjectProxy(request) {
 
   if (result.internalHello) {
     return workerHelloResponse();
+  }
+
+  if (isWebSocketRequest) {
+    return result.upstreamResponse;
   }
 
   const proxyResponse = buildProxyResponse(result.upstreamResponse);

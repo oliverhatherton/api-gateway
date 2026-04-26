@@ -1,5 +1,6 @@
 import { workerHelloResponse } from "./controllers/health-controller.js";
 import { handleWorkerProjectProxy } from "./controllers/proxy-controller.js";
+import { isWebSocketUpgrade } from "./utils/header-utils.js";
 import {
   withWorkerCors,
   workerCorsPreflightResponse,
@@ -15,6 +16,10 @@ export default {
 
     if (url.pathname === "/") {
       return withWorkerCors(workerHelloResponse(), request);
+    }
+
+    if (isWebSocketUpgrade(request.headers.entries())) {
+      return handleWorkerProjectProxy(request);
     }
 
     return withWorkerCors(await handleWorkerProjectProxy(request), request);
