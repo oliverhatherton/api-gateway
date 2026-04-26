@@ -31,7 +31,3 @@ export function filterHopByHopHeaders(headerEntries) {
 
   return headers;
 }
-
-export function expressHeadersToEntries(headersObject) {
-  return Object.entries(headersObject);
-}

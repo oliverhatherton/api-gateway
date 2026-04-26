@@ -47,20 +47,6 @@ export function applyCorsToHeaders(headers, { origin, requestHeaders }) {
   setVaryHeader(headers, "Access-Control-Request-Headers");
 }
 
-export function setExpressCorsHeaders(request, response) {
-  const corsHeaders = buildCorsHeaderValues({
-    origin: request.get("origin"),
-    requestHeaders: request.get("access-control-request-headers"),
-  });
-
-  Object.entries(corsHeaders).forEach(([key, value]) => {
-    response.setHeader(key, value);
-  });
-
-  response.append("Vary", "Origin");
-  response.append("Vary", "Access-Control-Request-Headers");
-}
-
 export function workerCorsPreflightResponse(request) {
   const headers = new Headers();
 

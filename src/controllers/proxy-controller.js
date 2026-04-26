@@ -1,5 +1,4 @@
 import {
-  expressHeadersToEntries,
   filterHopByHopHeaders,
   isWebSocketUpgrade,
 } from "../utils/header-utils.js";
@@ -8,56 +7,7 @@ import {
   buildProxyResponse,
   forwardProjectRequest,
 } from "../services/proxy-service.js";
-import {
-  sendExpressHello,
-  workerHelloResponse,
-  workerJsonError,
-} from "./health-controller.js";
-
-function buildExpressSourceUrl(request) {
-  if (request.originalUrl) {
-    return new URL(request.originalUrl, "http://localhost");
-  }
-
-  return new URL("http://localhost");
-}
-
-export async function handleExpressProjectProxy(request, response) {
-  const project = String(request.params.project || "").toLowerCase();
-  const restPath = String(request.params[0] || "");
-  const result = await forwardProjectRequest({
-    project,
-    restPath,
-    sourceUrl: buildExpressSourceUrl(request),
-    method: request.method,
-    headers: expressHeadersToEntries(request.headers),
-    body: request.body,
-  });
-
-  if (!result.ok) {
-    response.status(result.status).json({ error: result.error });
-    return;
-  }
-
-  if (result.internalHello) {
-    sendExpressHello(response);
-    return;
-  }
-
-  const proxyResponse = buildProxyResponse(result.upstreamResponse);
-  response.status(proxyResponse.status);
-  proxyResponse.headers.forEach((value, key) => {
-    response.setHeader(key, value);
-  });
-
-  if (!proxyResponse.body) {
-    response.end();
-    return;
-  }
-
-  const bodyBuffer = Buffer.from(await result.upstreamResponse.arrayBuffer());
-  response.send(bodyBuffer);
-}
+import { workerHelloResponse, workerJsonError } from "./health-controller.js";
 
 export async function handleWorkerProjectProxy(request) {
   const url = new URL(request.url);

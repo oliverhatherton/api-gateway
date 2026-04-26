@@ -5,11 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "start": "node src/local.js"
-  },
-  "dependencies": {
-    "express": "^4.21.2"
+    "deploy": "wrangler deploy"
   },
   "devDependencies": {
     "wrangler": "^4.24.3"

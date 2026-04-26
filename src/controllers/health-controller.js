@@ -1,9 +1,5 @@
 import { JSON_HEADERS } from "../consts/http.js";
 
-export function sendExpressHello(response) {
-  response.status(200).json({ message: "Hello World!" });
-}
-
 export function workerHelloResponse() {
   return new Response(JSON.stringify({ message: "Hello World!" }), {
     status: 200,

@@ -42,19 +42,6 @@ Edit `PROJECT_BACKENDS` in `src/consts/project-backends.js`:
 }
 ```
 
-## Local Development
-
-Install dependencies and run the Express server:
-
-```bash
-npm install
-npm start
-```
-
-The local Express app will listen on `http://localhost:3000`.
-
-Note: local Express mode in this repo currently proxies HTTP requests only. WebSocket proxying is supported in the Worker runtime.
-
 ## Cloudflare Workers
 
 Deploy the Worker with Wrangler:
@@ -72,4 +59,4 @@ Then point `api.oliverhatherton.com` at the deployed Worker in Cloudflare so vis
 - controllers: `src/controllers`
 - services: `src/services`
 - utilities: `src/utils`
-- entrypoints: `src/app.js`, `src/worker.js`, `src/local.js`
+- entrypoint: `src/worker.js`
