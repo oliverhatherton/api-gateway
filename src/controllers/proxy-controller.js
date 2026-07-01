@@ -1,7 +1,5 @@
-import {
-  filterHopByHopHeaders,
-  isWebSocketUpgrade,
-} from "../utils/header-utils.js";
+import { isWebSocketUpgrade } from "../utils/header-utils.js";
+import { rewriteSetCookieHeaders } from "../utils/cookie-utils.js";
 import { parseProjectPath } from "../utils/path-utils.js";
 import {
   buildProxyResponse,
@@ -41,8 +39,13 @@ export async function handleWorkerProjectProxy(request) {
 
   const proxyResponse = buildProxyResponse(result.upstreamResponse);
 
+  const headers = rewriteSetCookieHeaders(proxyResponse.headers, {
+    pathPrefix: `/${parsedPath.project}`,
+    gatewayHost: url.hostname,
+  });
+
   return new Response(proxyResponse.body, {
     status: proxyResponse.status,
-    headers: filterHopByHopHeaders(proxyResponse.headers.entries()),
+    headers,
   });
 }
