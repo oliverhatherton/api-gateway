@@ -26,7 +26,7 @@ export function filterHopByHopHeaders(headerEntries) {
       continue;
     }
 
-    headers.set(name, value);
+    headers.append(name, value);
   }
 
   return headers;
