@@ -7,7 +7,7 @@ import {
 } from "./utils/cors-utils.js";
 
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     if (request.method === "OPTIONS") {
       return workerCorsPreflightResponse(request);
     }
@@ -19,9 +19,12 @@ export default {
     }
 
     if (isWebSocketUpgrade(request.headers.entries())) {
-      return handleWorkerProjectProxy(request);
+      return handleWorkerProjectProxy(request, env);
     }
 
-    return withWorkerCors(await handleWorkerProjectProxy(request), request);
+    return withWorkerCors(
+      await handleWorkerProjectProxy(request, env),
+      request,
+    );
   },
 };

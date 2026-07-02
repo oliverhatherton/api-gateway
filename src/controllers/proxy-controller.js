@@ -7,7 +7,7 @@ import {
 } from "../services/proxy-service.js";
 import { workerHelloResponse, workerJsonError } from "./health-controller.js";
 
-export async function handleWorkerProjectProxy(request) {
+export async function handleWorkerProjectProxy(request, env) {
   const url = new URL(request.url);
   const parsedPath = parseProjectPath(url.pathname);
   const isWebSocketRequest = isWebSocketUpgrade(request.headers.entries());
@@ -23,6 +23,7 @@ export async function handleWorkerProjectProxy(request) {
     method: request.method,
     headers: request.headers.entries(),
     body: request.body,
+    env,
   });
 
   if (!result.ok) {

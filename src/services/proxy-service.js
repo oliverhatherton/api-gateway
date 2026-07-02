@@ -1,12 +1,16 @@
-import { PROJECT_BACKENDS } from "../consts/project-backends.js";
 import {
   filterHopByHopHeaders,
   isWebSocketUpgrade,
 } from "../utils/header-utils.js";
 import { resolveTargetUrl } from "../utils/path-utils.js";
 
-export function getProjectBaseUrl(project) {
-  return PROJECT_BACKENDS[String(project || "").toLowerCase()];
+/**
+ * The real project -> backend URL map lives only in the PROJECT_BACKENDS
+ * Worker secret (a JSON string), never in source. See README for setup.
+ */
+export function getProjectBaseUrl(project, env) {
+  const backends = JSON.parse(env?.PROJECT_BACKENDS ?? "{}");
+  return backends[String(project || "").toLowerCase()];
 }
 
 export function createForwardInit({ method, headers, body }) {
@@ -30,8 +34,9 @@ export async function forwardProjectRequest({
   method,
   headers,
   body,
+  env,
 }) {
-  const baseUrl = getProjectBaseUrl(project);
+  const baseUrl = getProjectBaseUrl(project, env);
 
   if (!baseUrl) {
     return {

@@ -14,7 +14,7 @@ It also acts as a gateway with this route format:
 
 `/{project}/{rest-of-url}`
 
-`project` is looked up from the hardcoded `PROJECT_BACKENDS` map in `src/consts/project-backends.js`, and then the request is forwarded to that backend with:
+`project` is looked up from the `PROJECT_BACKENDS` map (see [Project Mapping](#project-mapping) below), and then the request is forwarded to that backend with:
 
 - same method
 - same query string
@@ -33,13 +33,18 @@ For Cloudflare Worker deployments, WebSocket upgrade requests are also proxied t
 
 ## Project Mapping
 
-Edit `PROJECT_BACKENDS` in `src/consts/project-backends.js`:
+The real project → backend URL map is kept out of source on purpose — the
+whole point of this gateway is to avoid exposing actual backend hostnames.
+It's set as a Worker secret, `PROJECT_BACKENDS`, holding a JSON string:
 
-```json
-{
-  "portfolio": "https://portfolio-backend.example.com",
-  "blog": "https://blog-backend.example.com"
-}
+```bash
+echo '{"portfolio":"https://portfolio-backend.example.com","blog":"https://blog-backend.example.com"}' | npx wrangler secret put PROJECT_BACKENDS
+```
+
+Locally, `wrangler dev` reads the same secret from `.dev.vars` (gitignored):
+
+```
+PROJECT_BACKENDS={"portfolio":"https://portfolio-backend.example.com"}
 ```
 
 ## Cloudflare Workers
